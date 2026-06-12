@@ -1,8 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <PreferenceCategory android:title="Common">
 
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="enable_grid_view"
+            android:title="@string/enable_grid_view" />
         <CheckBoxPreference
             android:defaultValue="true"
             android:key="enable_vibrate"
@@ -30,9 +35,28 @@
             android:selectAllOnFocus="true"
             android:singleLine="true"
             android:title="@string/extra_fat_touch_threshold" />
+        <SeekBarPreference
+            android:defaultValue="50"
+            android:key="air_line_threshold_int"
+            android:max="100"
+            android:title="@string/air_line_threshold"
+            app:showSeekBarValue="true" />
+        <Preference
+            android:key="reset_threshold"
+            android:title="Reset to Default" />
     </PreferenceCategory>
     <PreferenceCategory android:title="Sensor">
 
+        <ListPreference
+            android:defaultValue="3"
+            android:entries="@array/air_source_entries"
+            android:entryValues="@array/air_source_values"
+            android:key="air_source"
+            android:title="@string/air_source"
+            app:useSimpleSummaryProvider="true" />
+        <Preference
+            android:key="air_help"
+            android:summary="@string/air_source_help" />
         <EditTextPreference
             android:defaultValue="0.8"
             android:key="gyro_air_lowest"
@@ -51,5 +75,23 @@
             android:selectAllOnFocus="true"
             android:singleLine="true"
             android:title="@string/accel_air_threshold" />
+        <SeekBarPreference
+            android:defaultValue="50"
+            android:key="camera_air_threshold"
+            android:max="255"
+            android:title="@string/camera_air_threshold"
+            app:showSeekBarValue="true" />
+        <EditTextPreference
+            android:defaultValue="0.5"
+            android:key="proximity_air_threshold"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="@string/proximity_air_threshold" />
+        <EditTextPreference
+            android:defaultValue="50.0"
+            android:key="light_air_threshold"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="@string/light_air_threshold" />
     </PreferenceCategory>
 </PreferenceScreen>

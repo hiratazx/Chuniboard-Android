@@ -19,7 +19,17 @@ class BrokenithmApplication : Application() {
         private val key: String,
         private val defValue: String
     ) : Settings<String>(context) {
-        override fun value() = config.getString(key, defValue) ?: defValue
+        override fun value(): String {
+            return try {
+                config.getString(key, defValue) ?: defValue
+            } catch (e: ClassCastException) {
+                try {
+                    config.getInt(key, defValue.toIntOrNull() ?: 0).toString()
+                } catch (e: ClassCastException) {
+                    defValue
+                }
+            }
+        }
         override fun update(value: String) = config.edit().putString(key, value).apply()
     }
 
@@ -37,7 +47,13 @@ class BrokenithmApplication : Application() {
         private val key: String,
         private val defValue: Int
     ) : Settings<Int>(context) {
-        override fun value() = config.getInt(key, defValue)
+        override fun value(): Int {
+            return try {
+                config.getInt(key, defValue)
+            } catch (e: ClassCastException) {
+                config.getString(key, defValue.toString())?.toInt() ?: defValue
+            }
+        }
         override fun update(value: Int) = config.edit().putInt(key, value).apply()
     }
 
@@ -52,7 +68,7 @@ class BrokenithmApplication : Application() {
 
     lateinit var lastServer : StringPreference
     lateinit var enableAir : BooleanPreference
-    lateinit var airSource : IntegerPreference
+    lateinit var airSource : StringPreference
     lateinit var simpleAir : BooleanPreference
     lateinit var showDelay : BooleanPreference
     lateinit var enableVibrate : BooleanPreference
@@ -65,12 +81,24 @@ class BrokenithmApplication : Application() {
     lateinit var gyroAirLowestBound : FloatPreference
     lateinit var gyroAirHighestBound : FloatPreference
     lateinit var accelAirThreshold : FloatPreference
+    lateinit var airLineThresholdInt : IntegerPreference
+    lateinit var enableGridView : BooleanPreference
+    lateinit var cameraAirThreshold : IntegerPreference
+    lateinit var proximityAirThreshold : FloatPreference
+    lateinit var lightAirThreshold : FloatPreference
 
     override fun onCreate() {
         super.onCreate()
+        val config = getSharedPreferences(settings_preference, MODE_PRIVATE)
+        try {
+            config.getString("air_source", "3")
+        } catch (e: ClassCastException) {
+            val value = config.getInt("air_source", 3)
+            config.edit().putString("air_source", value.toString()).apply()
+        }
         lastServer = StringPreference(this, "server", "")
         enableAir = BooleanPreference(this, "enable_air", true)
-        airSource = IntegerPreference(this, "air_source", 3)
+        airSource = StringPreference(this, "air_source", "3")
         simpleAir = BooleanPreference(this, "simple_air", false)
         showDelay = BooleanPreference(this, "show_delay", false)
         enableVibrate = BooleanPreference(this, "enable_vibrate", true)
@@ -83,6 +111,11 @@ class BrokenithmApplication : Application() {
         gyroAirLowestBound = FloatPreference(this, "gyro_air_lowest", 0.8f)
         gyroAirHighestBound = FloatPreference(this, "gyro_air_highest", 1.35f)
         accelAirThreshold = FloatPreference(this, "accel_air_threshold", 2f)
+        airLineThresholdInt = IntegerPreference(this, "air_line_threshold_int", 50)
+        enableGridView = BooleanPreference(this, "enable_grid_view", false)
+        cameraAirThreshold = IntegerPreference(this, "camera_air_threshold", 50)
+        proximityAirThreshold = FloatPreference(this, "proximity_air_threshold", 0.5f)
+        lightAirThreshold = FloatPreference(this, "light_air_threshold", 50f)
     }
 
     companion object {

@@ -1,7 +1,6 @@
 <resources>
-    <string name="app_name">Brokenithm</string>
-
-    <string name="title">Brokenithm-Evolved</string>
+    <string name="app_name">Chuniboard</string>
+    <string name="title">Chuniboard</string>
     <string name="start">Start</string>
     <string name="stop">Stop</string>
     <string name="coin">coin</string>
@@ -14,6 +13,11 @@
     <string name="show_debug_info">Debug</string>
     <string name="debug_info">touched: air:%d %s size:%f\n%s</string>
     <string name="current_latency">Current Latency: %f ms</string>
+    <string name="camera_debug">Brightness: %d | Note: %s</string>
+    <string name="proximity_debug">Proximity: %.1f | Note: %s</string>
+    <string name="light_debug">Light: %.1f | Note: %s</string>
+    <string name="note_normal">NORMAL</string>
+    <string name="note_air">AIR</string>
     <string name="press_again_to_exit">Press again to exit</string>
     <string name="show_delay">Show Delay</string>
     <string name="address">Address</string>
@@ -26,6 +30,10 @@
     <string name="gyro_air">Gyro Air</string>
     <string name="accel_air">Accel Air</string>
     <string name="touch_air">Touch Air</string>
+    <string name="camera_air">Camera Air</string>
+    <string name="proximity_air">Proximity Air</string>
+    <string name="light_air">Light Air</string>
+    <string name="auto_air">Auto Air</string>
     <string name="enable_air">Enable Air</string>
 
     <string name="settings">Settings</string>
@@ -37,4 +45,50 @@
     <string name="enable_touch_size">Enable Touch Size Check</string>
     <string name="enable_nfc">Enable NFC</string>
     <string name="enable_vibrate">Enable Vibration</string>
+    <string name="air_line_threshold">Air Line Threshold</string>
+    <string name="enable_grid_view">Enable Grid View</string>
+    <string name="camera_air_threshold">Camera Air Threshold</string>
+    <string name="proximity_air_threshold">Proximity Air Threshold</string>
+    <string name="light_air_threshold">Light Air Threshold</string>
+
+    <string name="air_source_help_gyro">Tilt phone to change Air height.</string>
+    <string name="air_source_help_accel">Vertical shake triggers Air.</string>
+    <string name="air_source_help_touch">Top screen area triggers Air.</string>
+    <string name="air_source_help_camera">Front camera tracks hand height.</string>
+    <string name="air_source_help_proximity">Hover over earpiece sensor.</string>
+    <string name="air_source_help_light">Block the light sensor (usually near earpiece).</string>
+    <string name="air_source_help_auto">Air active when any key touched.</string>
+    <string name="air_source_help_none">Air detection disabled.</string>
+
+    <string name="air_source_help">Air Modes Explained:\n
+        - Disable: No Air detection.\n
+        - Gyro: Tilt phone to change Air height.\n
+        - Accel: Vertical shake triggers Air.\n
+        - Touch: Top screen area triggers Air.\n
+        - Camera: Front camera tracks hand height.\n
+        - Proximity: Hover hand over the earpiece to trigger Air.\n
+        - Light: Block the light sensor (usually near earpiece).\n
+        - Auto: Air active when any key touched.</string>
+
+    <string name="air_source">Air Source</string>
+    <string-array name="air_source_entries">
+        <item>@string/disable_air</item>
+        <item>@string/gyro_air</item>
+        <item>@string/accel_air</item>
+        <item>@string/touch_air</item>
+        <item>@string/camera_air</item>
+        <item>@string/proximity_air</item>
+        <item>@string/light_air</item>
+        <item>@string/auto_air</item>
+    </string-array>
+    <string-array name="air_source_values">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+    </string-array>
 </resources>
