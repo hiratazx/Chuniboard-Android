@@ -3,6 +3,7 @@ package com.github.brokenithm.activity
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
 import android.graphics.*
 import android.graphics.drawable.BitmapDrawable
@@ -762,6 +763,12 @@ class MainActivity : AppCompatActivity() {
         })
 
         if (windowHeight > 0) updateThresholds()
+
+        // Apply screen orientation from settings
+        requestedOrientation = when (app.screenOrientation.value().toIntOrNull() ?: 0) {
+            1    -> ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE
+            else -> ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
+        }
     }
 
     private fun updateThresholds() {

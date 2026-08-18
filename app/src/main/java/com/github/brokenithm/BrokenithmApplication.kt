@@ -86,6 +86,7 @@ class BrokenithmApplication : Application() {
     lateinit var cameraAirThreshold : IntegerPreference
     lateinit var proximityAirThreshold : FloatPreference
     lateinit var lightAirThreshold : FloatPreference
+    lateinit var screenOrientation : StringPreference
 
     override fun onCreate() {
         super.onCreate()
@@ -116,6 +117,7 @@ class BrokenithmApplication : Application() {
         cameraAirThreshold = IntegerPreference(this, "camera_air_threshold", 50)
         proximityAirThreshold = FloatPreference(this, "proximity_air_threshold", 0.5f)
         lightAirThreshold = FloatPreference(this, "light_air_threshold", 50f)
+        screenOrientation = StringPreference(this, "screen_orientation", "0")
     }
 
     companion object {

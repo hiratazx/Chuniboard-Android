@@ -4,6 +4,14 @@
 
     <PreferenceCategory android:title="Common">
 
+        <ListPreference
+            android:defaultValue="0"
+            android:entries="@array/orientation_entries"
+            android:entryValues="@array/orientation_values"
+            android:key="screen_orientation"
+            android:title="@string/screen_orientation"
+            app:useSimpleSummaryProvider="true" />
+
         <CheckBoxPreference
             android:defaultValue="false"
             android:key="enable_grid_view"
