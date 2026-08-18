@@ -501,7 +501,20 @@ class MainActivity : AppCompatActivity() {
         mButtonRenderer = findViewById(R.id.button_render_area)
         updateThresholds()
 
-        findViewById<View>(R.id.touch_area).setOnTouchListener { view, event ->
+        val touchArea = findViewById<View>(R.id.touch_area)
+
+        // Exclude the entire touch area from system gesture interception (API 29+ / Android 10+).
+        // On Android 16 / HyperOS 3, the system gesture engine aggressively intercepts
+        // simultaneous multi-touch inputs as swipes/gestures before they reach the app.
+        // Setting exclusion rects prevents this, fixing the "must place fingers one by one" issue.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            touchArea.addOnLayoutChangeListener { v, left, top, right, bottom, _, _, _, _ ->
+                val exclusionRect = Rect(0, 0, right - left, bottom - top)
+                v.systemGestureExclusionRects = listOf(exclusionRect)
+            }
+        }
+
+        touchArea.setOnTouchListener { view, event ->
             if (expandControl.isExpanded) textExpand.callOnClick()
             view ?: return@setOnTouchListener true
             event ?: return@setOnTouchListener true
