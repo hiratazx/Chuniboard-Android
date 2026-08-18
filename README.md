@@ -23,6 +23,24 @@ Supports UDP and TCP connection to host.
 * **UDP**: Recommended for wireless connections.
 * **TCP**: Recommended for `adb reverse` port forwarding over USB for the lowest possible latency.
 
+---
+
+## ⚠️ Must Read — Xiaomi / HyperOS Users
+
+### Multitouch not working? (Xiaomi Pad, HyperOS)
+
+If some touch inputs don't register when placing multiple fingers simultaneously, you need to add **Chuniboard to Game Turbo**:
+
+1. Open **Game Turbo** (Xiaomi's gaming mode app)
+2. Tap **Add Games** and add **Chuniboard** to the list
+3. Launch Chuniboard **from Game Turbo** (or it will be launched automatically when you open the app after adding it)
+
+Game Turbo disables HyperOS's aggressive touch rejection / gesture interception for the app, which is what causes simultaneous touches to be dropped. This is a HyperOS system-level limitation — no app-side fix can fully replace this workaround.
+
+> Tested on: **Xiaomi Pad 7 Pro / HyperOS 3 (Android 16)**
+
+---
+
 ## Credits
 Based on [Brokenithm-Android](https://github.com/tindy2013/Brokenithm-Android) by tindy2013.
 The Windows server can be found in the [Brokenithm-Android-Server](https://github.com/tindy2013/Brokenithm-Android-Server) repository.
