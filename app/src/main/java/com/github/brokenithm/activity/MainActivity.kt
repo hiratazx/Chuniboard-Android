@@ -512,7 +512,14 @@ class MainActivity : AppCompatActivity() {
             }
             val currentAirAreaHeight = if (mAirSource != 3) 0f else mAirAreaHeightBoundary
             val currentButtonAreaHeight = if (mAirSource != 3) 0f else (windowHeight - mButtonAreaHeight)
+            // Disable touch event batching so simultaneous touches are never coalesced/dropped.
+            // Critical for multi-touch rhythm game input on devices with aggressive batching (e.g. HyperOS).
+            if (event.actionMasked == MotionEvent.ACTION_DOWN ||
+                event.actionMasked == MotionEvent.ACTION_POINTER_DOWN) {
+                view.requestUnbufferedDispatch(event)
+            }
             val totalTouches = event.pointerCount
+
             val touchedButtons = HashSet<Int>()
             var thisAirHeight = 6
             var maxTouchedSize = 0f
