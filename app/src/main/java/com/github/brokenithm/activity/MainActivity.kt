@@ -97,6 +97,9 @@ class MainActivity : AppCompatActivity() {
     private lateinit var mCameraDebugText: TextView
     private var windowWidth = 0f
     private var windowHeight = 0f
+    // Height of the touch_area view (set in initTouchArea before updateThresholds).
+    // Used to calculate air/slider zone boundaries in view-relative coordinates.
+    private var mTouchAreaHeight = 0f
     private var mTouchAreaRect: Rect? = null
 
     // sensor
@@ -500,9 +503,13 @@ class MainActivity : AppCompatActivity() {
         buttonWidth = gapWidth * buttonWidthToGap
         buttonBlockWidth = buttonWidth + gapWidth
         mButtonRenderer = findViewById(R.id.button_render_area)
+        val touchArea = findViewById<View>(R.id.touch_area)
+        // Capture the actual touch-area height BEFORE updateThresholds so that
+        // air/slider zone boundaries are relative to this view, not the full screen.
+        mTouchAreaHeight = touchArea.height.toFloat().coerceAtLeast(1f)
         updateThresholds()
 
-        val touchArea = findViewById<View>(R.id.touch_area)
+        // touchArea already obtained above (before updateThresholds).
 
         // Exclude the entire touch area from system gesture interception (API 29+ / Android 10+).
         // On Android 16 / HyperOS 3, the system gesture engine aggressively intercepts
@@ -525,7 +532,8 @@ class MainActivity : AppCompatActivity() {
                 mTouchAreaRect = Rect(arr[0], arr[1], arr[0] + view.width, arr[1] + view.height)
             }
             val currentAirAreaHeight = if (mAirSource != 3) 0f else mAirAreaHeightBoundary
-            val currentButtonAreaHeight = if (mAirSource != 3) 0f else (windowHeight - mButtonAreaHeight)
+            // Use mTouchAreaHeight (view-relative) so the full 0-5 air range is reachable.
+            val currentButtonAreaHeight = if (mAirSource != 3) 0f else (mTouchAreaHeight - mButtonAreaHeight)
             // Disable touch event batching so simultaneous touches are never coalesced/dropped.
             // Critical for multi-touch rhythm game input on devices with aggressive batching (e.g. HyperOS).
             if (event.actionMasked == MotionEvent.ACTION_DOWN ||
@@ -544,14 +552,17 @@ class MainActivity : AppCompatActivity() {
                 for (i in 0 until totalTouches) {
                     if (i == ignoredIndex) continue
                     val x = event.getX(i) + mTouchAreaRect!!.left - windowLeft
-                    val y = event.getY(i) + mTouchAreaRect!!.top - windowTop
+                    // Use view-relative Y so the air zone starts at the TOP of the
+                    // touch_area (y=0), not the top of the full screen. This makes
+                    // height=0 (all beams) reachable without leaving the visible UI.
+                    val y = event.getY(i)
                     when(y) {
                         in 0f..currentAirAreaHeight -> thisAirHeight = 0
                         in currentAirAreaHeight..currentButtonAreaHeight -> {
                             val curAir = ((y - mAirAreaHeightBoundary) / mAirBlockHeight).toInt()
                             thisAirHeight = if(mSimpleAir) 0 else thisAirHeight.coerceAtMost(curAir)
                         }
-                        in currentButtonAreaHeight..windowHeight -> {
+                        in currentButtonAreaHeight..mTouchAreaHeight -> {
                             val blockWidth = windowWidth / numOfButtons
                             val pointPos = x / blockWidth
                             var index = pointPos.toInt().coerceIn(0, 15)
@@ -616,7 +627,7 @@ class MainActivity : AppCompatActivity() {
             }
             mLastButtons = touchedButtons
             if (mAirSource == 3) mCurrentAirHeight = thisAirHeight
-            else if (mAirSource == 7) mCurrentAirHeight = if (touchedButtons.isEmpty()) 0 else 6
+            else if (mAirSource == 7) mCurrentAirHeight = if (touchedButtons.isEmpty()) 6 else 0 // active when any key touched
             
             if (mEnableGridView) drawGrid(touchedButtons, mCurrentAirHeight)
             if (mDebugInfo) textInfo.text = getString(R.string.debug_info, mCurrentAirHeight, touchedButtons.toString(), maxTouchedSize, event.toString())
@@ -774,9 +785,13 @@ class MainActivity : AppCompatActivity() {
     private fun updateThresholds() {
         if (windowWidth <= 0f || windowHeight <= 0f) return
         val threshold = app.airLineThresholdInt.value() / 100f
-        mButtonAreaHeight = windowHeight * (1.0f - threshold)
+        // Use the touch-area height for air zone calculations so that Y=0 (top of
+        // the view) maps to height=0 (all beams) and Y=buttonAreaTop maps to
+        // height=6 (no beams), regardless of how much of the screen other UI takes.
+        val touchAreaHeight = mTouchAreaHeight.takeIf { it > 0f } ?: windowHeight
+        mButtonAreaHeight = touchAreaHeight * (1.0f - threshold)
         mAirAreaHeightBoundary = 0f
-        val buttonAreaTop = windowHeight * threshold
+        val buttonAreaTop = touchAreaHeight * threshold
         mAirBlockHeight = (buttonAreaTop / numOfAirBlock).coerceAtLeast(1f)
         val buttonGuideline = findViewById<androidx.constraintlayout.widget.Guideline>(R.id.button_area_upper)
         val buttonParams = buttonGuideline.layoutParams as androidx.constraintlayout.widget.ConstraintLayout.LayoutParams
